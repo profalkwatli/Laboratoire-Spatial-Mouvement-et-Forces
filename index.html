@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Laboratoire Spatial Developed by Prof. AL KWATLI D.M.A (Email: dr.al kwatli@gmail.com) - Mouvement et Forces (2nde)</title>
+    <style>
+        /* === STYLES & INTERFACE FUTURISTE SOMBRE === */
+        :root {
+            --bg-dark: #090d16;
+            --bg-card: #131b2e;
+            --bg-input: #1e293b;
+            --border-color: #334155;
+            --accent-cyan: #38bdf8;
+            --accent-blue: #3b82f6;
+            --accent-green: #22c55e;
+            --accent-yellow: #eab308;
+            --accent-purple: #a855f7;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* En-tête / Bar de navigation */
+        header {
+            background: rgba(19, 27, 46, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-title h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-level {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            padding: 0.2rem 0.6rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Disposition principale */
+        .app-container {
+            display: grid;
+            grid-template-columns: 340px 1fr 340px;
+            gap: 1rem;
+            padding: 1rem;
+            flex: 1;
+            max-width: 1920px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (max-width: 1200px) {
+            .app-container { grid-template-columns: 320px 1fr; }
+            .panel-right { grid-column: span 2; }
+        }
+
+        @media (max-width: 900px) {
+            .app-container { grid-template-columns: 1fr; }
+            .panel-right { grid-column: span 1; }
+        }
+
+        /* Cartes & Panneaux */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Contrôles & Sliders */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .control-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.825rem;
+            color: var(--text-muted);
+        }
+
+        .control-value {
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            outline: none;
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 0.45rem 0.6rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        /* Zone Simulation Canvas */
+        .simulation-container {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            background: #020617;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .sim-toolbar {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            right: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            pointer-events: auto;
+        }
+
+        .btn {
+            background: rgba(30, 41, 59, 0.9);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.45rem 0.8rem;
+            border-radius: 0.375rem;
+            font-size: 0.825rem;
+            font-weight: 600;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn:hover {
+            background: var(--border-color);
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+        .btn-primary:hover { background: #2563eb; }
+
+        .btn-danger {
+            background: var(--accent-red);
+            border-color: var(--accent-red);
+            color: white;
+        }
+        .btn-danger:hover { background: #dc2626; }
+
+        /* Badge pour la nature du mouvement */
+        .motion-status-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--accent-purple);
+            color: #e9d5ff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            font-weight: bold;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Overlay d'information physique temps réel (HUD) */
+        .sim-hud {
+            position: absolute;
+            bottom: 0.75rem;
+            left: 0.75rem;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-family: monospace;
+            display: flex;
+            gap: 0.8rem;
+            pointer-events: none;
+        }
+
+        .hud-item span {
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        /* Grille des légendes des vecteurs */
+        .vector-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 0.4rem;
+            padding: 0.5rem;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 0.375rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        /* Onglets QCM / Conclusion */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            gap: 0.25rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .tab-content.active { display: flex; }
+
+        /* QCM */
+        .qcm-question {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .qcm-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .qcm-option {
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .qcm-option:hover { border-color: var(--accent-cyan); }
+        .qcm-option.correct { background: rgba(34, 197, 94, 0.2); border-color: var(--accent-green); color: #4ade80; }
+        .qcm-option.incorrect { background: rgba(239, 68, 68, 0.2); border-color: var(--accent-red); color: #f87171; }
+
+        .feedback-box {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.8rem;
+            display: none;
+        }
+        .feedback-box.show { display: block; }
+        .feedback-correct { background: rgba(34, 197, 94, 0.15); border: 1px solid var(--accent-green); color: #86efac; }
+        .feedback-incorrect { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--accent-red); color: #fca5a5; }
+
+        /* Conclusion et analyse automatique */
+        textarea {
+            width: 100%;
+            height: 110px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            color: var(--text-main);
+            padding: 0.5rem;
+            font-size: 0.825rem;
+            resize: vertical;
+            outline: none;
+        }
+        textarea:focus { border-color: var(--accent-cyan); }
+
+        .keyword-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .keyword-chip {
+            font-size: 0.7rem;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+        .keyword-chip.valid {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        /* Format d'impression pour fiche TP (A4) */
+        @media print {
+            body { background: white !important; color: black !important; }
+            header, .panel-left, .sim-toolbar, .btn, .tabs, .motion-status-badge { display: none !important; }
+            .app-container { display: block !important; width: 100% !important; }
+            .card { background: white !important; border: 1px solid #aaa !important; color: black !important; box-shadow: none !important; margin-bottom: 1rem; }
+            .simulation-container { border: 1px solid #000 !important; height: 350px !important; background: white !important; }
+            .print-header { display: block !important; text-align: center; margin-bottom: 1rem; }
+            .qcm-option { border: 1px solid #ccc !important; color: black !important; }
+        }
+        .print-header { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- En-tête principal -->
+    <header>
+        <div class="logo-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 3a9 9 0 0 0 0 18"/>
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 15l4 4"/>
+            </svg>
+            <h1>Laboratoire Spatial : Mouvement & Forces - Developed by Prof. AL KWATLI D.M.A (Email: dr.al kwatli@gmail.com)</h1>
+            <span class="badge-level">Physique-Chimie </span>
+        </div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <label for="student-name" style="font-size: 0.8rem; color: var(--text-muted);">Élève :</label>
+            <input type="text" id="student-name" placeholder="Nom Prénom" style="width: 130px; padding: 0.3rem;">
+            <button class="btn btn-primary" onclick="window.print()">🖨️ Fiche TP A4</button>
+        </div>
+    </header>
+
+    <!-- Fiche d'en-tête pour l'impression A4 -->
+    <div class="print-header">
+        <h1 style="font-size: 1.4rem;">TP : Mouvement et Forces dans l'Espace (2nde)</h1>
+        <p style="font-size: 0.9rem;">Élève : <span id="print-student-name">...</span> | Date : <span id="print-date"></span></p>
+        <hr style="margin: 0.5rem 0;">
+    </div>
+
+    <!-- Conteneur global de l'application -->
+    <div class="app-container">
+
+        <!-- PANNEAU GAUCHE : PROTOCOLES & CONTROLES -->
+        <div class="panel-left card">
+            <div class="card-header">
+                <span class="card-title">🧪 Expériences Pédagogiques</span>
+            </div>
+
+            <!-- Choix des expériences guidées A à F -->
+            <div class="control-group">
+                <label class="control-label" for="exp-select">Sélectionner une expérience :</label>
+                <select id="exp-select" onchange="loadPresetExperience(this.value)">
+                    <option value="A">A – Espace vide (Principe d'Inertie)</option>
+                    <option value="B">B – Effet d'un Astre (Gravitation)</option>
+                    <option value="C">C – Masse & Accélération (a = F/m)</option>
+                    <option value="D">D – Frottements spatiaux</option>
+                    <option value="E">E – Force perpendiculaire à v</option>
+                    <option value="F">F – Force opposée au mouvement</option>
+                    <option value="custom">⚙️ Mode Libre</option>
+                </select>
+            </div>
+
+            <div id="exp-description" style="font-size: 0.8rem; color: var(--accent-cyan); background: rgba(56,189,248,0.1); padding: 0.5rem; border-radius: 0.375rem; border-left: 3px solid var(--accent-cyan);">
+                --
+            </div>
+
+            <hr style="border-color: var(--border-color);">
+
+            <div class="card-title" style="font-size: 0.85rem;">⚙️ Paramètres Physiques</div>
+
+            <!-- Masse de la sonde m -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Masse sonde (m) :</span>
+                    <span class="control-value" id="val-mass-probe">100 kg</span>
+                </div>
+                <input type="range" id="param-mass-probe" min="50" max="500" step="10" value="100" oninput="updateParams()">
+            </div>
+
+            <!-- Masse de l'astre M -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Masse Astre (M) :</span>
+                    <span class="control-value" id="val-mass-star">0</span>
+                </div>
+                <input type="range" id="param-mass-star" min="0" max="5000" step="100" value="0" oninput="updateParams()">
+            </div>
+
+            <!-- Frottements k -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Frottement (k) :</span>
+                    <span class="control-value" id="val-friction">0.00</span>
+                </div>
+                <input type="range" id="param-friction" min="0" max="0.05" step="0.002" value="0" oninput="updateParams()">
+            </div>
+
+            <!-- Force Moteur -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Force Moteur ||F_app|| :</span>
+                    <span class="control-value" id="val-force-engine">0 N</span>
+                </div>
+                <input type="range" id="param-force-engine" min="0" max="200" step="5" value="0" oninput="updateParams()">
+            </div>
+
+            <!-- Angle Moteur -->
+            <div class="control-group">
+                <div class="control-label">
+                    <span>Angle Force / Vitesse :</span>
+                    <span class="control-value" id="val-force-angle">90°</span>
+                </div>
+                <input type="range" id="param-force-angle" min="-180" max="180" step="15" value="90" oninput="updateParams()">
+            </div>
+        </div>
+
+        <!-- ZONE CENTRALE : CANVAS DE SIMULATION -->
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div class="simulation-container">
+                <canvas id="simCanvas"></canvas>
+
+                <!-- Boutons d'action -->
+                <div class="sim-toolbar">
+                    <div class="btn-group">
+                        <button class="btn btn-primary" id="btn-play" onclick="togglePlayPause()">▶ Lancer</button>
+                        <button class="btn" onclick="resetSimulation()">🔄 Réinitialiser</button>
+                        <button class="btn" onclick="setGhostTrajectory()">👻 Fixer Trajectoire Témoin</button>
+                    </div>
+                </div>
+
+                <!-- Indicateur visuel de la nature du mouvement -->
+                <div class="motion-status-badge">
+                    Mouvement : <span id="motion-type-text" style="color:var(--accent-cyan);">Inactif</span>
+                </div>
+
+                <!-- HUD des valeurs physiques -->
+                <div class="sim-hud">
+                    <div class="hud-item">v = <span id="hud-v">0.0</span> m/s</div>
+                    <div class="hud-item">a = <span id="hud-a">0.0</span> m/s²</div>
+                    <div class="hud-item">||ΣF|| = <span id="hud-f">0.0</span> N</div>
+                    <div class="hud-item">t = <span id="hud-t">0.0</span> s</div>
+                </div>
+            </div>
+
+            <!-- Options d'affichage des vecteurs et de la chronophotographie -->
+            <div class="card" style="padding: 0.6rem;">
+                <div class="card-title" style="font-size: 0.8rem; margin-bottom: 0.2rem;">👁️ Affichage & Chronophotographie (Δt = 0,5s) :</div>
+                <div class="vector-legend">
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-chrono" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-red); border-radius: 50%;"></div>
+                        <span>Points Δt</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-sense" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-green);"></div>
+                        <span>Sens Mouvement</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-ghost" checked onchange="draw()">
+                        <div class="legend-color" style="background: #94a3b8;"></div>
+                        <span>Trajectoire Témoin</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-v" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-blue);"></div>
+                        <span>Vitesse (v)</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-fgrav" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-green);"></div>
+                        <span>Gravité (F_g)</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-fapp" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-yellow);"></div>
+                        <span>Moteur (F_app)</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-ffrot" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-purple);"></div>
+                        <span>Frottement (F_f)</span>
+                    </label>
+                    <label class="legend-item">
+                        <input type="checkbox" id="chk-ftot" checked onchange="draw()">
+                        <div class="legend-color" style="background: var(--accent-red);"></div>
+                        <span>Résultante (ΣF)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANNEAU DROIT : QCM ET CONCLUSION -->
+        <div class="panel-right card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('tab-qcm')">❓ Auto-Évaluation</button>
+                <button class="tab-btn" onclick="switchTab('tab-conclusion')">📝 Conclusion</button>
+            </div>
+
+            <!-- TAB 1 : QCM -->
+            <div id="tab-qcm" class="tab-content active">
+                <div id="qcm-container">
+                    <!-- Généré dynamiquement selon l'expérience -->
+                </div>
+            </div>
+
+            <!-- TAB 2 : CONCLUSION -->
+            <div id="tab-conclusion" class="tab-content">
+                <div style="font-size: 0.8rem; color: var(--text-muted);">
+                    Rédigez la conclusion scientifique de l'expérience :
+                </div>
+
+                <textarea id="student-conclusion" placeholder="En l'absence de force résultante..." oninput="checkKeywords()"></textarea>
+
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem;">Notions clés détectées :</div>
+                    <div class="keyword-list">
+                        <span class="keyword-chip" id="kw-force">force résultante</span>
+                        <span class="keyword-chip" id="kw-vitesse">vecteur vitesse</span>
+                        <span class="keyword-chip" id="kw-direction">direction</span>
+                        <span class="keyword-chip" id="kw-valeur">valeur / norme</span>
+                        <span class="keyword-chip" id="kw-inertie">principe d'inertie</span>
+                        <span class="keyword-chip" id="kw-rectiligne">rectiligne uniforme</span>
+                    </div>
+                </div>
+
+                <div id="conclusion-status" class="feedback-box"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CODE JAVASCRIPT STANDALONE INTÉGRAL -->
+    <script>
+        /* === PARAMÈTRES ET VARIABLES DE SIMULATION === */
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const G_CONST = 1500; // Constante de gravité simulée
+        const DELTA_T = 0.5;  // Pas de temps chronophotographique (secondes)
+
+        let isRunning = false;
+        let animationFrameId = null;
+        let lastTime = 0;
+        let simTime = 0;
+        let lastChronoTime = 0;
+
+        // Objet Sonde Spatiale
+        let probe = {
+            x: 80,
+            y: 260,
+            vx: 130, // px/s
+            vy: 0,
+            mass: 100, // kg
+            radius: 8,
+            trail: [],
+            chronoPoints: []
+        };
+
+        // Trajectoire Témoin (Ghost)
+        let ghostData = null;
+
+        // Astre / Gravité
+        let star = {
+            x: 450,
+            y: 160,
+            mass: 0,
+            radius: 24,
+            isDragging: false
+        };
+
+        // Forces
+        let engineForce = 0;
+        let engineAngleDeg = 90;
+        let frictionCoeff = 0;
+
+        let currentExpKey = 'A';
+
+        /* === CONFIGURATION DES EXPÉRIENCES GUIDÉES A-F === */
+        const EXPERIENCES = {
+            'A': {
+                name: "A – Espace vide",
+                desc: "Absence de force résultante. Observez le mouvement rectiligne uniforme (Principe d'inertie).",
+                probe: { x: 80, y: 260, vx: 130, vy: 0, mass: 100 },
+                star: { x: 450, y: 160, mass: 0 },
+                friction: 0, engine: 0, angle: 0,
+                qcm: {
+                    question: "Que fait la sonde lorsque le moteur est éteint et sans aucun astre ?",
+                    options: [
+                        { text: "Elle finit par s'arrêter au bout de quelques secondes.", correct: false, explain: "Non ! Dans le vide sans frottement, rien ne la freine." },
+                        { text: "Elle poursuit son mouvement rectiligne uniforme indéfiniment.", correct: true, explain: "Bravo ! C'est le principe d'inertie (1ère loi de Newton)." },
+                        { text: "Sa vitesse diminue progressivement.", correct: false, explain: "Faux. Sans force, la valeur de la vitesse reste constante." }
+                    ]
+                }
+            },
+            'B': {
+                name: "B – Effet d'un Astre",
+                desc: "Un astre est placé à côté de la trajectoire. Observez la déviation de la vitesse et la courbure.",
+                probe: { x: 80, y: 350, vx: 140, vy: 0, mass: 100 },
+                star: { x: 420, y: 180, mass: 2500 },
+                friction: 0, engine: 0, angle: 0,
+                qcm: {
+                    question: "Comment varie le vecteur vitesse lors de l'approche de l'astre ?",
+                    options: [
+                        { text: "Seule sa valeur (norme) augmente.", correct: false, explain: "La direction change également !" },
+                        { text: "Sa direction et sa valeur sont toutes les deux modifiées.", correct: true, explain: "Exact ! La force de gravité courbe la trajectoire et accélère la sonde." },
+                        { text: "Le vecteur vitesse ne subit aucune modification.", correct: false, explain: "Incorrect. Une force non nulle modifie toujours le vecteur vitesse." }
+                    ]
+                }
+            },
+            'C': {
+                name: "C – Masse & Accélération",
+                desc: "Testez une masse plus grande pour une même force moteur applied (a = F/m).",
+                probe: { x: 80, y: 260, vx: 100, vy: 0, mass: 250 },
+                star: { x: 450, y: 160, mass: 0 },
+                friction: 0, engine: 100, angle: 0,
+                qcm: {
+                    question: "Si la masse de la sonde augmente sous la même force, son accélération sera :",
+                    options: [
+                        { text: "Plus forte.", correct: false, explain: "Plus la masse est grande, plus l'objet résiste à la modification de son mouvement." },
+                        { text: "Plus faible (d'après a = F/m).", correct: true, explain: "Parfait ! L'accélération est inversement proportionnelle à la masse." },
+                        { text: "Identique.", correct: false, explain: "Incorrect, l'inertie augmente avec la masse." }
+                    ]
+                }
+            },
+            'D': {
+                name: "D – Frottements spatiaux",
+                desc: "Presence de poussières/gaz. La force de frottement F_frot s'oppose au vecteur vitesse v.",
+                probe: { x: 80, y: 260, vx: 180, vy: 0, mass: 100 },
+                star: { x: 450, y: 160, mass: 0 },
+                friction: 0.02, engine: 0, angle: 0,
+                qcm: {
+                    question: "Comment sont disposés les points de la chronophotographie au cours du freinage ?",
+                    options: [
+                        { text: "Ils sont de plus en plus espacés.", correct: false, explain: "Un espacement croissant indique une accélération !" },
+                        { text: "Ils sont de plus en plus rapprochés.", correct: true, explain: "Excellente observation ! Vitesse plus faible = moins de distance parcourue pendant Δt." },
+                        { text: "Ils restent strictement équidistants.", correct: false, explain: "Faux, la vitesse diminue." }
+                    ]
+                }
+            },
+            'E': {
+                name: "E – Force perpendiculaire à v",
+                desc: "La force moteur agit à 90° du vecteur vitesse. Observez la modification de direction.",
+                probe: { x: 80, y: 260, vx: 130, vy: 0, mass: 100 },
+                star: { x: 450, y: 160, mass: 0 },
+                friction: 0, engine: 80, angle: 90,
+                qcm: {
+                    question: "Que provoque une force perpendiculaire au vecteur vitesse ?",
+                    options: [
+                        { text: "Une modification de la direction (trajectoire courbe).", correct: true, explain: "Très bien ! Une force perpendiculaire fait tourner le vecteur vitesse sans modifier sa norme au départ." },
+                        { text: "Un arrêt immédiat de la sonde.", correct: false, explain: "Non, elle ne freine pas dans l'axe de marche." },
+                        { text: "Aucun effet sur le mouvement.", correct: false, explain: "Faux." }
+                    ]
+                }
+            },
+            'F': {
+                name: "F – Force opposée au mouvement",
+                desc: "La force agit à -180° (sens opposé). La sonde ralentit, s'arrête puis repart en arrière.",
+                probe: { x: 100, y: 260, vx: 150, vy: 0, mass: 100 },
+                star: { x: 450, y: 160, mass: 0 },
+                friction: 0, engine: 90, angle: -180,
+                qcm: {
+                    question: "Lorsque la force est constamment opposée au vecteur vitesse :",
+                    options: [
+                        { text: "La sonde ralentit, s'arrête un instant puis repart en sens inverse.", correct: true, explain: "C'est exact ! La valeur de la vitesse passe par zéro puis s'inverse." },
+                        { text: "La sonde accélère directement vers l'avant.", correct: false, explain: "La force s'oppose au mouvement initial." },
+                        { text: "La trajectoire devient immédiatement un cercle.", correct: false, explain: "Non, le mouvement reste rectiligne." }
+                    ]
+                }
+            },
+            'custom': {
+                name: "⚙️ Mode Libre",
+                desc: "Modifiez tous les paramètres et déplacez l'astre pour créer vos propres expériences.",
+                probe: { x: 80, y: 260, vx: 120, vy: 0, mass: 100 },
+                star: { x: 450, y: 260, mass: 1000 },
+                friction: 0, engine: 0, angle: 0, qcm: null
+            }
+        };
+
+        /* === INITIALISATION & ÉVÉNEMENTS === */
+        window.onload = function() {
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            setupDragAndDrop();
+            
+            document.getElementById('student-name').addEventListener('input', (e) => {
+                document.getElementById('print-student-name').textContent = e.target.value || '...';
+            });
+            document.getElementById('print-date').textContent = new Date().toLocaleDateString('fr-FR');
+
+            loadPresetExperience('A');
+        };
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+            draw();
+        }
+
+        /* === DRAG & DROP DE L'ASTRE SUR CANVAS === */
+        function setupDragAndDrop() {
+            let isDragging = false;
+
+            canvas.addEventListener('mousedown', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+
+                const dist = Math.hypot(mx - star.x, my - star.y);
+                if (dist < star.radius + 15 && star.mass > 0) {
+                    isDragging = true;
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = canvas.getBoundingClientRect();
+                    star.x = e.clientX - rect.left;
+                    star.y = e.clientY - rect.top;
+                    draw();
+                }
+            });
+
+            canvas.addEventListener('mouseup', () => isDragging = false);
+            canvas.addEventListener('mouseleave', () => isDragging = false);
+
+            // Support Écran Tactile (Mobile/Tablette)
+            canvas.addEventListener('touchstart', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const mx = touch.clientX - rect.left;
+                const my = touch.clientY - rect.top;
+                if (Math.hypot(mx - star.x, my - star.y) < star.radius + 15 && star.mass > 0) {
+                    isDragging = true;
+                }
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (isDragging) {
+                    const rect = canvas.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    star.x = touch.clientX - rect.left;
+                    star.y = touch.clientY - rect.top;
+                    draw();
+                }
+            });
+
+            canvas.addEventListener('touchend', () => isDragging = false);
+        }
+
+        /* === CHARGEMENT DES EXPÉRIENCES ET PARAMÈTRES === */
+        function loadPresetExperience(key) {
+            currentExpKey = key;
+            const exp = EXPERIENCES[key];
+
+            document.getElementById('exp-description').textContent = exp.desc;
+
+            probe.x = exp.probe.x;
+            probe.y = exp.probe.y;
+            probe.vx = exp.probe.vx;
+            probe.vy = exp.probe.vy;
+            probe.mass = exp.probe.mass;
+            probe.trail = [];
+            probe.chronoPoints = [{ x: probe.x, y: probe.y, time: 0 }];
+
+            star.x = exp.star.x;
+            star.y = exp.star.y;
+            star.mass = exp.star.mass;
+
+            frictionCoeff = exp.friction;
+            engineForce = exp.engine;
+            engineAngleDeg = exp.angle;
+
+            document.getElementById('param-mass-probe').value = probe.mass;
+            document.getElementById('param-mass-star').value = star.mass;
+            document.getElementById('param-friction').value = frictionCoeff;
+            document.getElementById('param-force-engine').value = engineForce;
+            document.getElementById('param-force-angle').value = engineAngleDeg;
+
+            updateParamsDisplay();
+            loadQCM(exp.qcm);
+
+            pauseSimulation();
+            simTime = 0;
+            lastChronoTime = 0;
+            updateMotionStatus(0, 0, 0);
+            draw();
+        }
+
+        function updateParams() {
+            probe.mass = parseFloat(document.getElementById('param-mass-probe').value);
+            star.mass = parseFloat(document.getElementById('param-mass-star').value);
+            frictionCoeff = parseFloat(document.getElementById('param-friction').value);
+            engineForce = parseFloat(document.getElementById('param-force-engine').value);
+            engineAngleDeg = parseFloat(document.getElementById('param-force-angle').value);
+
+            updateParamsDisplay();
+            draw();
+        }
+
+        function updateParamsDisplay() {
+            document.getElementById('val-mass-probe').textContent = probe.mass + " kg";
+            document.getElementById('val-mass-star').textContent = star.mass > 0 ? star.mass + " ×10²⁰ kg" : "0 (Désactivé)";
+            document.getElementById('val-friction').textContent = frictionCoeff.toFixed(3);
+            document.getElementById('val-force-engine').textContent = engineForce + " N";
+            document.getElementById('val-force-angle').textContent = engineAngleDeg + "°";
+        }
+
+        /* === BOUCLE FISIQUE TEMPS RÉEL (60 FPS) === */
+        function togglePlayPause() {
+            if (isRunning) pauseSimulation();
+            else startSimulation();
+        }
+
+        function startSimulation() {
+            isRunning = true;
+            document.getElementById('btn-play').textContent = "⏸ Pause";
+            document.getElementById('btn-play').classList.replace('btn-primary', 'btn-danger');
+            lastTime = performance.now();
+            animationFrameId = requestAnimationFrame(updateLoop);
+        }
+
+        function pauseSimulation() {
+            isRunning = false;
+            document.getElementById('btn-play').textContent = "▶ Lancer";
+            document.getElementById('btn-play').classList.replace('btn-danger', 'btn-primary');
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        }
+
+        function resetSimulation() {
+            loadPresetExperience(currentExpKey);
+        }
+
+        function setGhostTrajectory() {
+            if (probe.trail.length > 0) {
+                ghostData = {
+                    trail: [...probe.trail],
+                    chronoPoints: [...probe.chronoPoints]
+                };
+            } else {
+                ghostData = null;
+            }
+            draw();
+        }
+
+        function updateLoop(now) {
+            if (!isRunning) return;
+
+            const dt = Math.min((now - lastTime) / 1000, 0.05);
+            lastTime = now;
+            simTime += dt;
+
+            // Calcul vectoriel des forces
+            let Fx_tot = 0, Fy_tot = 0;
+
+            // 1. Force Gravitationnelle (F_g)
+            let Fgx = 0, Fgy = 0;
+            if (star.mass > 0) {
+                const dx = star.x - probe.x;
+                const dy = star.y - probe.y;
+                const distSqr = dx * dx + dy * dy;
+                const dist = Math.sqrt(distSqr);
+
+                if (dist > star.radius + probe.radius) {
+                    const Fg_mag = (G_CONST * star.mass * probe.mass) / distSqr;
+                    Fgx = Fg_mag * (dx / dist);
+                    Fgy = Fg_mag * (dy / dist);
+                }
+            }
+
+            // 2. Force Appliquée Moteur (F_app)
+            let Fax = 0, Fay = 0;
+            if (engineForce > 0) {
+                const v_mag = Math.hypot(probe.vx, probe.vy);
+                let baseAngle = 0;
+                if (v_mag > 0.001) {
+                    baseAngle = Math.atan2(probe.vy, probe.vx);
+                }
+                const engineAngleRad = baseAngle + (engineAngleDeg * Math.PI / 180);
+                Fax = engineForce * Math.cos(engineAngleRad);
+                Fay = engineForce * Math.sin(engineAngleRad);
+            }
+
+            // 3. Force de Frottement (F_frot = -k * v)
+            let Ffx = 0, Ffy = 0;
+            if (frictionCoeff > 0) {
+                Ffx = -frictionCoeff * probe.mass * probe.vx;
+                Ffy = -frictionCoeff * probe.mass * probe.vy;
+            }
+
+            // Résultante Sum F
+            Fx_tot = Fgx + Fax + Ffx;
+            Fy_tot = Fgy + Fay + Ffy;
+
+            // Accélération a = F / m
+            const ax = Fx_tot / probe.mass;
+            const ay = Fy_tot / probe.mass;
+
+            // Intégration d'Euler
+            probe.vx += ax * dt * 20;
+            probe.vy += ay * dt * 20;
+
+            probe.x += probe.vx * dt;
+            probe.y += probe.vy * dt;
+
+            // Trajectoire continue
+            probe.trail.push({ x: probe.x, y: probe.y });
+            if (probe.trail.length > 1200) probe.trail.shift();
+
+            // Chronophotographie à intervalle Δt fixe
+            if (simTime - lastChronoTime >= DELTA_T) {
+                probe.chronoPoints.push({ x: probe.x, y: probe.y, time: simTime });
+                lastChronoTime = simTime;
+            }
+
+            // Analyse de la nature du mouvement
+            const v_norm = Math.hypot(probe.vx, probe.vy);
+            const a_norm = Math.hypot(ax, ay);
+            updateMotionStatus(v_norm, ax, ay);
+
+            // Mise à jour de l'affichage HUD
+            document.getElementById('hud-v').textContent = (v_norm / 10).toFixed(1);
+            document.getElementById('hud-a').textContent = a_norm.toFixed(1);
+            document.getElementById('hud-f').textContent = Math.hypot(Fx_tot, Fy_tot).toFixed(1);
+            document.getElementById('hud-t').textContent = simTime.toFixed(1);
+
+            // Rendu graphique
+            draw(Fgx, Fgy, Fax, Fay, Ffx, Ffy, Fx_tot, Fy_tot);
+
+            // Arrêt automatique si la sonde quitte le canvas
+            if (probe.x < -100 || probe.x > canvas.width + 100 || probe.y < -100 || probe.y > canvas.height + 100) {
+                pauseSimulation();
+            } else {
+                animationFrameId = requestAnimationFrame(updateLoop);
+            }
+        }
+
+        /* === DÉTERMINATION DE LA NATURE DU MOUVEMENT === */
+        function updateMotionStatus(v_norm, ax, ay) {
+            let shape = "Rectiligne";
+            let speedState = "Uniforme";
+
+            // Calcul du produit vectoriel (courbure de trajectoire)
+            const crossProduct = Math.abs(probe.vx * ay - probe.vy * ax);
+            if (crossProduct > 120) shape = "Curviligne";
+
+            // Calcul du produit scalaire v . a (variation de norme)
+            const dotProduct = probe.vx * ax + probe.vy * ay;
+            if (dotProduct > 15) speedState = "Accéléré";
+            else if (dotProduct < -15) speedState = "Ralenti";
+            else speedState = "Uniforme";
+
+            const resultText = v_norm < 1 ? "Immobile" : `${shape} ${speedState}`;
+            document.getElementById('motion-type-text').textContent = resultText;
+        }
+
+        /* === RENDU CANVAS ET TRACÉ GRAPHIQUE === */
+        function draw(Fgx=0, Fgy=0, Fax=0, Fay=0, Ffx=0, Ffy=0, Ftx=0, Fty=0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawGrid();
+
+            const showChrono = document.getElementById('chk-chrono').checked;
+            const showSense = document.getElementById('chk-sense').checked;
+            const showGhost = document.getElementById('chk-ghost').checked;
+
+            // 1. Trajectoire Témoin (Ghost)
+            if (showGhost && ghostData) {
+                if (ghostData.trail.length > 1) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "rgba(148, 163, 184, 0.4)";
+                    ctx.setLineDash([5, 5]);
+                    ctx.lineWidth = 2;
+                    ctx.moveTo(ghostData.trail[0].x, ghostData.trail[0].y);
+                    for (let i = 1; i < ghostData.trail.length; i++) {
+                        ctx.lineTo(ghostData.trail[i].x, ghostData.trail[i].y);
+                    }
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                if (showChrono && ghostData.chronoPoints) {
+                    ghostData.chronoPoints.forEach(pt => {
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                        ctx.fillStyle = "rgba(148, 163, 184, 0.6)";
+                        ctx.fill();
+                    });
+                }
+            }
+
+            // 2. Trajectoire Réelle
+            if (probe.trail.length > 1) {
+                ctx.beginPath();
+                ctx.strokeStyle = "#38bdf8";
+                ctx.lineWidth = 2.5;
+                ctx.moveTo(probe.trail[0].x, probe.trail[0].y);
+                for (let i = 1; i < probe.trail.length; i++) {
+                    ctx.lineTo(probe.trail[i].x, probe.trail[i].y);
+                }
+                ctx.stroke();
+            }
+
+            // 3. Chronophotographie (Points Δt = 0.5s)
+            if (showChrono && probe.chronoPoints.length > 0) {
+                probe.chronoPoints.forEach((pt, index) => {
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+                    ctx.fillStyle = "#ef4444";
+                    ctx.fill();
+                    ctx.strokeStyle = "#ffffff";
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    if (index < 5) {
+                        ctx.fillStyle = "#94a3b8";
+                        ctx.font = "9px sans-serif";
+                        ctx.fillText(`M${index}`, pt.x - 6, pt.y - 8);
+                    }
+                });
+            }
+
+            // 4. Sens du mouvement (Flèche verte)
+            if (showSense && probe.trail.length > 10) {
+                const lastIdx = probe.trail.length - 1;
+                const p1 = probe.trail[Math.max(0, lastIdx - 10)];
+                const p2 = probe.trail[lastIdx];
+                const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+
+                ctx.save();
+                ctx.translate(p2.x, p2.y);
+                ctx.rotate(angle);
+                ctx.fillStyle = "#22c55e";
+                ctx.beginPath();
+                ctx.moveTo(0, -4);
+                ctx.lineTo(8, 0);
+                ctx.lineTo(0, 4);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 5. Astre
+            if (star.mass > 0) {
+                ctx.save();
+                ctx.beginPath();
+                const grad = ctx.createRadialGradient(star.x, star.y, 4, star.x, star.y, star.radius);
+                grad.addColorStop(0, '#fef08a');
+                grad.addColorStop(0.5, '#eab308');
+                grad.addColorStop(1, '#78350f');
+                ctx.fillStyle = grad;
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.restore();
+
+                ctx.fillStyle = '#fef08a';
+                ctx.font = '10px sans-serif';
+                ctx.fillText('Astre', star.x - 14, star.y + star.radius + 12);
+            }
+
+            // 6. Sonde Spatiale
+            ctx.save();
+            ctx.translate(probe.x, probe.y);
+            const angle = Math.atan2(probe.vy, probe.vx);
+            ctx.rotate(angle);
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.moveTo(10, 0);
+            ctx.lineTo(-7, -6);
+            ctx.lineTo(-3, 0);
+            ctx.lineTo(-7, 6);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#38bdf8';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.restore();
+
+            // 7. Dessin dynamique des vecteurs
+            const vecScale = 0.5;
+            if (document.getElementById('chk-v').checked) {
+                drawVector(probe.x, probe.y, probe.vx * 0.4, probe.vy * 0.4, '#3b82f6', 'v');
+            }
+            if (document.getElementById('chk-fgrav').checked && star.mass > 0) {
+                drawVector(probe.x, probe.y, Fgx * vecScale, Fgy * vecScale, '#22c55e', 'Fg');
+            }
+            if (document.getElementById('chk-fapp').checked && engineForce > 0) {
+                drawVector(probe.x, probe.y, Fax * vecScale, Fay * vecScale, '#eab308', 'Fapp');
+            }
+            if (document.getElementById('chk-ffrot').checked && frictionCoeff > 0) {
+                drawVector(probe.x, probe.y, Ffx * vecScale, Ffy * vecScale, '#a855f7', 'Ffrot');
+            }
+            if (document.getElementById('chk-ftot').checked) {
+                drawVector(probe.x, probe.y, Ftx * vecScale, Fty * vecScale, '#ef4444', 'ΣF');
+            }
+        }
+
+        function drawVector(x, y, vx, vy, color, label) {
+            const length = Math.hypot(vx, vy);
+            if (length < 2) return;
+
+            const headLen = 7;
+            const angle = Math.atan2(vy, vx);
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + vx, y + vy);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(x + vx, y + vy);
+            ctx.lineTo(x + vx - headLen * Math.cos(angle - Math.PI / 6), y + vy - headLen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(x + vx - headLen * Math.cos(angle + Math.PI / 6), y + vy - headLen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.font = 'bold 10px sans-serif';
+            ctx.fillText(label, x + vx + 5, y + vy + 3);
+            ctx.restore();
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(51, 65, 85, 0.2)';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < canvas.width; x += 40) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += 40) {
+                ctx.beginPath();
+                ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+        }
+
+        /* === ONGLETS ET MODULE DE CORRECTION QCM === */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function loadQCM(qcmData) {
+            const container = document.getElementById('qcm-container');
+            container.innerHTML = '';
+
+            if (!qcmData) {
+                container.innerHTML = '<p style="font-size:0.8rem; color:var(--text-muted);">Mode libre : Pas de QCM pré-configuré.</p>';
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="qcm-question">${qcmData.question}</div>
+                <div class="qcm-options">
+                    ${qcmData.options.map((opt, idx) => `
+                        <div class="qcm-option" onclick="validateQCM(${idx}, ${opt.correct}, '${opt.explain.replace(/'/g, "\\'")}')">
+                            ${opt.text}
+                        </div>
+                    `).join('')}
+                </div>
+                <div id="qcm-feedback" class="feedback-box"></div>
+            `;
+        }
+
+        function validateQCM(selectedIndex, isCorrect, explanation) {
+            const options = document.querySelectorAll('.qcm-option');
+            options.forEach((opt, idx) => {
+                opt.style.pointerEvents = 'none';
+                if (idx === selectedIndex) {
+                    opt.classList.add(isCorrect ? 'correct' : 'incorrect');
+                }
+            });
+
+            const feedback = document.getElementById('qcm-feedback');
+            feedback.className = `feedback-box show ${isCorrect ? 'feedback-correct' : 'feedback-incorrect'}`;
+            feedback.innerHTML = `<strong>${isCorrect ? '✅ Correct !' : '❌ Erreur :'}</strong> ${explanation}`;
+        }
+
+        /* === VERIFICATION AUTOMATIQUE DE LA CONCLUSION === */
+        const KEYWORDS = {
+            'kw-force': ['force', 'forces', 'résultante'],
+            'kw-vitesse': ['vitesse', 'vecteur'],
+            'kw-direction': ['direction', 'trajectoire'],
+            'kw-valeur': ['valeur', 'norme', 'intensité'],
+            'kw-inertie': ['inertie', 'principe'],
+            'kw-rectiligne': ['rectiligne', 'uniforme', 'repos']
+        };
+
+        function checkKeywords() {
+            const text = document.getElementById('student-conclusion').value.toLowerCase();
+            let count = 0;
+
+            for (const [id, words] of Object.entries(KEYWORDS)) {
+                const el = document.getElementById(id);
+                const found = words.some(w => text.includes(w));
+                if (found) {
+                    el.classList.add('valid');
+                    count++;
+                } else {
+                    el.classList.remove('valid');
+                }
+            }
+
+            const status = document.getElementById('conclusion-status');
+            if (count >= 4) {
+                status.className = 'feedback-box show feedback-correct';
+                status.innerHTML = '✅ <strong>Conclusion Scientifique Validée !</strong>';
+            } else {
+                status.className = 'feedback-box show feedback-incorrect';
+                status.innerHTML = `⚠️ <strong>Progression :</strong> ${count}/6 notions clés utilisées.`;
+            }
+        }
+    </script>
+</body>
+</html>
